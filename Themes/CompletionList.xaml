@@ -134,8 +134,8 @@
 						TextBlock.Foreground="{TemplateBinding Foreground}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Image Source="{Binding Image}" Width="16" Height="16" Margin="0,0,2,0"/>
+                                            <StackPanel UseLayoutRounding="True" SnapsToDevicePixels="True" Orientation="Horizontal">
+                                                <Image UseLayoutRounding="True" SnapsToDevicePixels="True" Source="{Binding Image}" Width="16" Height="16" Margin="0,0,2,0"/>
                                                 <ContentPresenter Content="{Binding Content}"/>
                                             </StackPanel>
                                         </DataTemplate>

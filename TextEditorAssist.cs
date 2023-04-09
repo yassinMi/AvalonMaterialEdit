@@ -5,6 +5,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using MaterialDesignThemes.Wpf;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -99,7 +100,7 @@ namespace AvalonMaterialEdit
         /// </summary>
         /// <param name="targetXshd"></param>
         /// <param name="fs"></param>
-        public static void AddApplicationFieldsAsKeywords(XshdSyntaxDefinition targetXshd, IEnumerable<object> fs)
+        public static void AddApplicationFieldsAsKeywords(XshdSyntaxDefinition targetXshd, IEnumerable fs)
         {
             XshdKeywords appFsKeyWords = new XshdKeywords();
             foreach (var item in fs)
@@ -137,21 +138,29 @@ namespace AvalonMaterialEdit
 
 
 
-        public static IEnumerable<string> GetFieldDescriptors(DependencyObject obj)
+        public static IEnumerable GetFieldDescriptors(DependencyObject obj)
         {
-            return (IEnumerable<string>)obj.GetValue(FieldDescriptorsProperty);
+            return (IEnumerable)obj.GetValue(FieldDescriptorsProperty);
         }
 
-        public static void SetFieldDescriptors(DependencyObject obj, IEnumerable<string> value)
+        public static void SetFieldDescriptors(DependencyObject obj, IEnumerable value)
         {
             obj.SetValue(FieldDescriptorsProperty, value);
         }
 
         // Using a DependencyProperty as the backing store for FieldDescriptors.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty FieldDescriptorsProperty =
-            DependencyProperty.RegisterAttached("FieldDescriptors", typeof(IEnumerable<string>), typeof(TextEditorAssist), new PropertyMetadata(null));
+            DependencyProperty.RegisterAttached("FieldDescriptors", typeof(IEnumerable), typeof(TextEditorAssist), new PropertyMetadata(null,h_fsChage));
 
-
+        private static void h_fsChage(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var te = d as TextEditor;
+            if (te == null) return;
+            if (e.NewValue != null)
+            {
+                TryInitializeHighlitingDefintion(te);
+            }
+        }
 
         public static TextEditorMode GetMode(DependencyObject obj)
         {
@@ -519,7 +528,7 @@ namespace AvalonMaterialEdit
 
 
                 //var maybe_fields = GetFieldDescriptors(userSqliteTextEditor).Where(f => f.PropName.ToLower().StartsWith(e.Text.ToLower()));
-                var maybe_fields = GetFieldDescriptors(userSqliteTextEditor).Where(f => (GetFieldDescriptorsName?.Invoke(f)?? f.ToString()).ToLower().StartsWith(e.Text.ToLower()));
+                var maybe_fields = GetFieldDescriptors(userSqliteTextEditor).Cast<object>(). Where(f => (GetFieldDescriptorsName?.Invoke(f)?? f.ToString()).ToLower().StartsWith(e.Text.ToLower()));
                 //var maybe_fields = GetFieldDescriptors(userSqliteTextEditor).Where(f=>FieldDescriptorsCompletionsPredicate(f, e.Text));
                 var maybe_sql_keywords = sql_keywords.Where(f => f.ToLower().StartsWith(e.Text.ToLower()));
 

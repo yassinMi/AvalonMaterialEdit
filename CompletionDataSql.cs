@@ -88,7 +88,7 @@ namespace AvalonMaterialEdit
             get; set;
         }
 
-        public string Text { get; private set; }
+        public string Text { get;  set; }
 
         // Use this property if you want to show a fancy UIElement in the list.
         public object Content
